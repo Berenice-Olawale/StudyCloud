@@ -241,48 +241,94 @@ async function loadCourses() {
 
     renderCourses();
 }
+
+
+
 // DISPLAY COURSES
-
 function renderCourses() {
+
     const container = document.getElementById("coursesGrid");
-    const empty = document.getElementById("emptyCourses");
     const dashboardContainer = document.getElementById("dashboardCoursesGrid");
+    const empty = document.getElementById("emptyCourses");
 
-    const courseHTML = courses.map(course => `
-        <div class="course-card">
+    function getCourseStyle(courseName) {
 
-            <div class="course-icon indigo">
-                <i data-lucide="book-open"></i>
-            </div>
+        const name = courseName.toLowerCase();
 
-            <small>${escapeHTML(course.course_code || "YOUR COURSE")}</small>
+        if (name.includes("programming") || name.includes("computer")) {
+            return { icon: "code", color: "indigo" };
+        }
 
-            <h4>${escapeHTML(course.course_name)}</h4>
+        if (name.includes("database") || name.includes("sql")) {
+            return { icon: "database", color: "teal" };
+        }
 
-            <p>${escapeHTML(course.description || "No description")}</p>
+        if (name.includes("cloud")) {
+            return { icon: "cloud", color: "orange" };
+        }
 
-            <div class="course-actions">
+        if (name.includes("artificial") || name.includes("intelligence") || name.includes("ai")) {
+            return { icon: "brain", color: "rose" };
+        }
 
-                <button class="secondary-button"
-                    data-course-edit="${course.id}">
-                    Edit
-                </button>
+        if (name.includes("math")) {
+            return { icon: "calculator", color: "blue" };
+        }
 
-                <button class="secondary-button"
-                    data-course-delete="${course.id}">
-                    Delete
-                </button>
-
-            </div>
-        </div>
-    `).join("");
-
-    if (container) {
-        container.innerHTML = courseHTML;
+        return { icon: "book-open", color: "indigo" };
     }
 
+    function createCourseCard(course, showActions) {
+
+        const style = getCourseStyle(course.course_name || "");
+
+        return `
+            <div class="course-card">
+
+                <div class="course-icon ${style.color}">
+                    <i data-lucide="${style.icon}"></i>
+                </div>
+
+                <small>${escapeHTML(course.course_code || "YOUR COURSE")}</small>
+
+                <h4>${escapeHTML(course.course_name)}</h4>
+
+                <p>${escapeHTML(course.description || "No description added yet.")}</p>
+
+                ${showActions ? `
+                    <div class="course-actions">
+
+                        <button type="button"
+                            class="secondary-button"
+                            data-course-edit="${course.id}">
+                            Edit
+                        </button>
+
+                        <button type="button"
+                            class="secondary-button"
+                            data-course-delete="${course.id}">
+                            Delete
+                        </button>
+
+                    </div>
+                ` : ""}
+
+            </div>
+        `;
+    }
+
+    // Full course cards with management buttons
+    if (container) {
+        container.innerHTML = courses
+            .map(course => createCourseCard(course, true))
+            .join("");
+    }
+
+    // Cleaner course cards on Overview
     if (dashboardContainer) {
-        dashboardContainer.innerHTML = courseHTML;
+        dashboardContainer.innerHTML = courses
+            .map(course => createCourseCard(course, false))
+            .join("");
     }
 
     if (empty) {
@@ -293,6 +339,9 @@ function renderCourses() {
         lucide.createIcons();
     }
 }
+
+
+
 
 
 
@@ -716,7 +765,6 @@ async function loadDashboardData() {
             return `
                 <div class="task-row">
 
-                    <div class="task-check"></div>
 
                     <div class="task-info">
                         <strong>${escapeHTML(task.title)}</strong>
@@ -750,6 +798,13 @@ async function loadDashboardData() {
         await loadTasksAndCourses();
         await loadMaterials();
 
+        // Restore the last page only once
+        // Restore the last page the user visited
+        const savedPage = localStorage.getItem("studycloud_current_page");
+        const validPages = ["dashboard", "courses", "tasks", "materials"];
+
+        openPage(validPages.includes(savedPage) ? savedPage : "dashboard");
+
         console.log("Dashboard data loaded successfully.");
 
     } catch (error) {
@@ -759,7 +814,9 @@ async function loadDashboardData() {
 }
 
 // Page navigation
+
 function openPage(pageName) {
+
     document.querySelectorAll(".page").forEach(page => {
         page.classList.remove("active");
     });
@@ -788,7 +845,11 @@ function openPage(pageName) {
         titles[pageName] || "Overview";
 
     document.getElementById("sidebar").classList.remove("open");
+
+    // Remember the current page
+    localStorage.setItem("studycloud_current_page", pageName);
 }
+
 
 // Open the Add Task modal
 

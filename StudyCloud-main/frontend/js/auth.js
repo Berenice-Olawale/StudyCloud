@@ -249,6 +249,7 @@ async function checkExistingSession() {
 function logout() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(STUDENT_KEY);
+    localStorage.removeItem("studycloud_current_page");
 
     showAuthentication();
 
