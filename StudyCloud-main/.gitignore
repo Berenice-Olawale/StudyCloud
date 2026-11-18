@@ -1,0 +1,27 @@
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Environment variables and secrets
+.env
+backend/.env
+
+# Local databases
+*.db
+backend/instance/
+
+# Uploaded files
+backend/uploads/
+
+# Test download files
+backend/sample_notes.txt
+backend/downloaded_notes.txt
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/

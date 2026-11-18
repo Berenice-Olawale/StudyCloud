@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyCloud | Student Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+    <!-- AUTHENTICATION -->
+    <section id="authSection" class="auth-section">
+        <div class="auth-card">
+
+            <div class="auth-brand">
+                <div class="auth-logo">S</div>
+                <h1>StudyCloud</h1>
+                <p>Your academic life, organised.</p>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" class="auth-form">
+                <h2>Welcome back</h2>
+                <p class="auth-subtitle">Sign in to continue to your workspace.</p>
+
+                <label for="loginEmail">Email address</label>
+                <input type="email" id="loginEmail" placeholder="you@example.com" required>
+
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+
+                <p id="loginError" class="auth-error"></p>
+
+                <button type="submit" class="auth-submit">
+                    Sign in
+                </button>
+
+                <p class="auth-switch">
+                    Don't have an account?
+                    <button type="button" id="showRegister">Create one</button>
+                </p>
+            </form>
+
+            <!-- REGISTRATION FORM -->
+            <form id="registerForm" class="auth-form hidden">
+                <h2>Create your account</h2>
+                <p class="auth-subtitle">Start organising your academic life.</p>
+
+                <label for="registerName">Full name</label>
+                <input type="text" id="registerName" placeholder="Your full name" required>
+
+                <label for="registerEmail">Email address</label>
+                <input type="email" id="registerEmail" placeholder="you@example.com" required>
+
+                <label for="registerPassword">Password</label>
+                <input type="password" id="registerPassword" placeholder="At least 8 characters" minlength="8" required>
+
+                <p id="registerError" class="auth-error"></p>
+
+                <button type="submit" class="auth-submit">
+                    Create account
+                </button>
+
+                <p class="auth-switch">
+                    Already have an account?
+                    <button type="button" id="showLogin">Sign in</button>
+                </p>
+            </form>
+
+        </div>
+    </section>
+
+    <!-- MAIN APPLICATION -->
+    <div class="app" id="appShell">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+
+            <a href="#" class="brand">
+                <span class="brand-icon">
+                    <i data-lucide="graduation-cap"></i>
+                </span>
+                StudyCloud
+            </a>
+
+            <p class="nav-title">WORKSPACE</p>
+
+            <nav>
+                <button class="nav-link active" data-page="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    Overview
+                </button>
+
+                <button class="nav-link" data-page="courses">
+                    <i data-lucide="book-open"></i>
+                    My Courses
+                </button>
+
+                <button class="nav-link" data-page="tasks">
+                    <i data-lucide="check-square"></i>
+                    Tasks
+                </button>
+
+                <button class="nav-link" data-page="materials">
+                    <i data-lucide="folder"></i>
+                    Study Materials
+                </button>
+            </nav>
+
+            <button type="button" id="logoutButton" class="logout-button">
+                <i data-lucide="log-out"></i>
+                <span>Log out</span>
+            </button>
+
+            <div class="sidebar-bottom">
+
+                <div class="tip">
+                    <i data-lucide="lightbulb"></i>
+                    <div>
+                        <strong>Stay on track</strong>
+                        <small>Small steps make progress.</small>
+                    </div>
+                </div>
+
+                <div class="profile">
+                    <div class="avatar" data-student-initials>ST</div>
+                    <div>
+                        <strong data-student-name>Student</strong>
+                        <small>Student account</small>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main">
+
+            <header class="topbar">
+
+                <button class="menu-button" id="menuToggle">
+                    <i data-lucide="menu"></i>
+                </button>
+
+                <div class="breadcrumb">
+                    Workspace / <strong id="pageTitle">Overview</strong>
+                </div>
+
+                <div class="top-actions">
+                    <span id="todayDate"></span>
+
+                    <button class="icon-button">
+                        <i data-lucide="bell"></i>
+                    </button>
+
+                    <div class="avatar" data-student-initials>ST</div>
+                </div>
+
+            </header>
+
+            <div class="content">
+
+                <!-- DASHBOARD PAGE -->
+                <section class="page active" id="dashboardPage">
+
+                    <div class="welcome">
+                        <div>
+                            <p class="eyebrow">YOUR ACADEMIC WORKSPACE</p>
+                            <h1 id="welcomeHeading">Welcome.</h1>
+                            <p class="muted">
+                                Here's an overview of your studies and priorities.
+                            </p>
+                        </div>
+
+                        <button class="primary-button" id="addTaskTop">
+                            <i data-lucide="plus"></i>
+                            Add a task
+                        </button>
+                    </div>
+
+                    <!-- STATISTICS -->
+                    <div class="stats-grid">
+
+                        <div class="stat-card">
+                            <div class="stat-heading">
+                                <span class="stat-icon blue">
+                                    <i data-lucide="book-open"></i>
+                                </span>
+                                <span>THIS SEMESTER</span>
+                            </div>
+
+                            <h2 id="totalCoursesCount">00</h2>
+                            <p>Active courses</p>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-heading">
+                                <span class="stat-icon orange">
+                                    <i data-lucide="clock"></i>
+                                </span>
+                                <span>TO BE COMPLETED</span>
+                            </div>
+
+                            <h2 id="pendingCount">00</h2>
+                            <p>Pending tasks</p>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-heading">
+                                <span class="stat-icon green">
+                                    <i data-lucide="check-circle"></i>
+                                </span>
+                                <span>NICE WORK</span>
+                            </div>
+
+                            <h2 id="completedCount">00</h2>
+                            <p>Tasks completed</p>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-heading">
+                                <span class="stat-icon purple">
+                                    <i data-lucide="trending-up"></i>
+                                </span>
+                                <span>YOUR CONSISTENCY</span>
+                            </div>
+
+                            <h2>76%</h2>
+                            <p>Weekly study goal</p>
+
+                            <div class="progress">
+                                <span style="width:76%"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- DASHBOARD CONTENT -->
+                    <div class="dashboard-grid">
+
+                        <!-- UPCOMING DEADLINES -->
+                        <div class="panel">
+
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Upcoming deadlines</h3>
+                                    <p>Keep track of your next assignments.</p>
+                                </div>
+
+                                <button class="text-button" data-open-page="tasks">
+                                    View all →
+                                </button>
+                            </div>
+
+                            <div id="upcomingTasks"></div>
+
+                            <div id="emptyUpcoming" class="empty hidden">
+                                You're all caught up!
+                            </div>
+
+                        </div>
+
+                        <!-- STUDY PROGRESS -->
+                        <div class="panel">
+
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Study progress</h3>
+                                    <p>Your weekly activity.</p>
+                                </div>
+
+                                <span class="pill">This week</span>
+                            </div>
+
+                            <div class="chart">
+
+                                <div class="chart-column">
+                                    <div class="bar" style="height:42%"></div>
+                                    <small>Mon</small>
+                                </div>
+
+                                <div class="chart-column">
+                                    <div class="bar" style="height:70%"></div>
+                                    <small>Tue</small>
+                                </div>
+
+                                <div class="chart-column">
+                                    <div class="bar" style="height:54%"></div>
+                                    <small>Wed</small>
+                                </div>
+
+                                <div class="chart-column">
+                                    <div class="bar" style="height:88%"></div>
+                                    <small>Thu</small>
+                                </div>
+
+                                <div class="chart-column">
+                                    <div class="bar" style="height:60%"></div>
+                                    <small>Fri</small>
+                                </div>
+
+                                <div class="chart-column">
+                                    <div class="bar pale" style="height:25%"></div>
+                                    <small>Sat</small>
+                                </div>
+
+                                <div class="chart-column">
+                                    <div class="bar pale" style="height:12%"></div>
+                                    <small>Sun</small>
+                                </div>
+
+                            </div>
+
+                            <div class="chart-footer">
+                                <span>Weekly study hours</span>
+                                <strong>12.4 hrs</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- COURSES -->
+                    <div class="panel courses-panel">
+
+                        <div class="panel-header">
+                            <div>
+                                <h3>Your courses</h3>
+                                <p>Quick access to your current subjects.</p>
+                            </div>
+
+                            <button class="text-button" data-open-page="courses">
+                                All courses →
+                            </button>
+                        </div>
+
+                        
+                        <div class="course-grid" id="dashboardCoursesGrid"></div>
+                    </div>
+
+                </section>
+
+                <!-- TASKS PAGE -->
+                <section class="page" id="tasksPage">
+
+                    <div class="page-heading">
+                        <div>
+                            <p class="eyebrow">STAY ORGANIZED</p>
+                            <h1>My tasks</h1>
+                            <p class="muted">Manage assignments and deadlines.</p>
+                        </div>
+
+                        <button class="primary-button" id="addTaskPage">
+                            <i data-lucide="plus"></i>
+                            Add a task
+                        </button>
+                    </div>
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+                            <div>
+                                <h3>All tasks</h3>
+                                <p>Your personal assignment list.</p>
+                            </div>
+
+                            <select id="taskFilter">
+                                <option value="all">All tasks</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div id="allTasks"></div>
+
+                        <div id="emptyAll" class="empty hidden">
+                            No tasks found.
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- COURSES PAGE -->
+                <section class="page" id="coursesPage">
+                    <div class="page-heading">
+                        <div>
+                            <p class="eyebrow">YOUR SEMESTER</p>
+                            <h1>My courses</h1>
+                            <p class="muted">Your current academic subjects.</p>
+                        </div>
+
+                        <button class="primary-button" id="addCourseButton">
+                            <i data-lucide="plus"></i>
+                            Add course
+                        </button>
+                    </div>
+                    <div class="course-grid expanded-courses" id="coursesGrid"></div>
+
+                    <div class="panel empty hidden" id="emptyCourses">
+                        <h3>No courses yet</h3>
+                        <p>Add your first course to get started.</p>
+                    </div>
+
+                </section>
+
+
+                <!-- MATERIALS PAGE -->
+                <section class="page" id="materialsPage">
+                    <div class="page-heading">
+                        <div>
+                            <p class="eyebrow">YOUR LEARNING LIBRARY</p>
+                            <h1>Study materials</h1>
+                            <p class="muted">Keep your learning resources organized.</p>
+                        </div>
+
+                        <button class="primary-button" id="uploadMaterial">
+                            <i data-lucide="upload"></i>
+                            Add material
+                        </button>
+                    </div>
+
+                    <div class="materials-grid" id="materialsGrid"></div>
+
+                    <div class="panel material-empty hidden" id="emptyMaterials">
+                        <i data-lucide="folder-open"></i>
+                        <h3>Your library starts here</h3>
+                        <p>Lecture notes, documents and study resources will appear here.</p>
+                        <small>Your files are currently stored locally.</small>
+                    </div>
+
+                </section>
+
+            </div>
+        </main>
+    </div>
+    <!-- COURSE MODAL -->
+    <div class="modal-backdrop hidden" id="courseModal">
+
+        <form class="modal" id="courseForm">
+
+            <div class="modal-header">
+                <h2 id="courseModalTitle">Add a course</h2>
+                <button type="button" class="close-button" id="closeCourseModal">×</button>
+            </div>
+
+            <input type="hidden" id="courseId">
+
+            <label for="courseName">Course name</label>
+            <input type="text" id="courseName" required maxlength="100">
+
+            <label for="courseCode">Course code</label>
+            <input type="text" id="courseCode" maxlength="30">
+
+            <label for="courseDescription">Description</label>
+            <textarea id="courseDescription" rows="3"></textarea>
+
+            <div class="modal-actions">
+                <button type="button" class="secondary-button" id="cancelCourse">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button">
+                    Save course
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+
+    <!-- MATERIAL MODAL -->
+    <div class="modal-backdrop hidden" id="materialModal">
+
+        <form class="modal" id="materialForm">
+
+            <div class="modal-header">
+                <h2>Upload study material</h2>
+                <button type="button" class="close-button" id="closeMaterialModal">×</button>
+            </div>
+
+            <label for="materialTitle">Title</label>
+            <input type="text" id="materialTitle" maxlength="150">
+
+            <label for="materialDescription">Description</label>
+            <textarea id="materialDescription" rows="3"></textarea>
+
+            <label for="materialCourse">Course</label>
+            <select id="materialCourse">
+                <option value="">No course selected</option>
+            </select>
+
+            <label for="materialFile">Choose file</label>
+            <input type="file" id="materialFile" required
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.png,.jpg,.jpeg">
+
+            <small class="form-hint">Maximum file size: 10 MB.</small>
+
+            <div class="modal-actions">
+                <button type="button" class="secondary-button" id="cancelMaterial">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button" id="materialSubmit">
+                    Upload material
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+
+
+    <!-- ADD TASK MODAL -->
+
+    <div class="modal-backdrop hidden" id="taskModal">
+
+        <form class="modal" id="taskForm">
+
+            <div class="modal-header">
+                <h2 id="taskModalTitle">Add a new task</h2>
+                <button type="button" id="closeModal" class="close-button">×</button>
+            </div>
+
+            <input type="hidden" id="taskId" name="taskId">
+
+            <label for="taskTitle">Task name</label>
+            <input id="taskTitle" name="title" required placeholder="Enter task name">
+
+            <label for="taskCourse">Course</label>
+            <select id="taskCourse" name="course">
+                <option value="">No course selected</option>
+            </select>
+
+            <label for="taskDue">Due date</label>
+            <input id="taskDue" name="dueDate" type="date" required>
+
+            <label for="taskPriority">Priority</label>
+            <select id="taskPriority" name="priority">
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="low">Low</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="button" class="secondary-button" id="cancelModal">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button" id="saveTaskButton">
+                    Save task
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/auth.js"></script>
+
+</body>
+
+</html>
