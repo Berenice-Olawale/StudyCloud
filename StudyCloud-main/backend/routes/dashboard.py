@@ -1,4 +1,3 @@
-
 from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify
@@ -14,7 +13,6 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @jwt_required()
 def get_dashboard_summary():
 
-    # Identify the currently logged-in student
     student_id = int(get_jwt_identity())
 
     student = Student.query.get(student_id)
@@ -22,16 +20,15 @@ def get_dashboard_summary():
     if not student:
         return jsonify({"error": "Student not found."}), 404
 
-    # Get the current time and the next seven days
     now = datetime.utcnow()
-    next_seven_days = now + timedelta(days=7)
+    next_seven_days = (now + timedelta(days=7)).replace(
+        hour=23, minute=59, second=59, microsecond=0
+    )
 
-    # Count the student's courses
     total_courses = Course.query.filter_by(
         student_id=student_id
     ).count()
 
-    # Get all tasks belonging to this student
     tasks = Task.query.filter_by(
         student_id=student_id
     ).all()
@@ -46,13 +43,11 @@ def get_dashboard_summary():
         1 for task in tasks if not task.is_completed
     )
 
-    # Find incomplete tasks whose deadlines have passed
     overdue_tasks = [
         task for task in tasks
         if not task.is_completed and task.due_date < now
     ]
 
-    # Find incomplete tasks due within the next seven days
     upcoming_tasks = [
         task for task in tasks
         if (
@@ -61,10 +56,8 @@ def get_dashboard_summary():
         )
     ]
 
-    # Sort upcoming tasks by deadline
     upcoming_tasks.sort(key=lambda task: task.due_date)
 
-    # Get the five most recently uploaded materials
     recent_materials = (
         StudyMaterial.query
         .filter_by(student_id=student_id)
