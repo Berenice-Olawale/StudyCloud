@@ -3,6 +3,7 @@ const DASHBOARD_API_BASE_URL = "http://127.0.0.1:5000";
 
 let tasks = [];
 let courses = [];
+let currentWeeklyGoal = 10;
 
 // Get the saved login token
 function getToken() {
@@ -212,7 +213,8 @@ async function loadCourses() {
 
     const dropdowns = [
         document.getElementById("taskCourse"),
-        document.getElementById("materialCourse")
+        document.getElementById("materialCourse"),
+        document.getElementById("studyCourse")
     ];
 
     dropdowns.forEach(dropdown => {
@@ -242,6 +244,75 @@ async function loadCourses() {
     renderCourses();
 }
 
+// LOAD AND DISPLAY WEEKLY STUDY PROGRESS
+
+function formatStudyHours(hours) {
+    return Number(Number(hours).toFixed(2)).toString();
+}
+
+async function loadStudyProgress() {
+
+    const data = await apiRequest("/api/study/summary");
+
+    const totalHours = Number(data.total_hours || 0);
+    const weeklyGoal = Number(data.weekly_goal || 0);
+    const percentage = Number(data.percentage || 0);
+
+    currentWeeklyGoal = weeklyGoal;
+
+    const percentElement =
+        document.getElementById("weeklyProgressPercent");
+
+    const hoursElement =
+        document.getElementById("weeklyHoursText");
+
+    const progressBar =
+        document.getElementById("weeklyProgressBar");
+
+    const totalElement =
+        document.getElementById("weeklyStudyHours");
+
+    if (percentElement) {
+        percentElement.textContent = `${percentage}%`;
+    }
+
+    if (hoursElement) {
+        hoursElement.textContent =
+            `${formatStudyHours(totalHours)} / ${formatStudyHours(weeklyGoal)} hrs`;
+    }
+
+    if (progressBar) {
+        progressBar.style.width = `${Math.min(percentage, 100)}%`;
+    }
+
+    if (totalElement) {
+        totalElement.textContent =
+            `${formatStudyHours(totalHours)} hrs`;
+    }
+
+    // Update the seven daily chart bars
+
+    const dailyHours = data.daily_hours || [];
+
+    const bars = document.querySelectorAll(
+        "#studyProgressChart .bar"
+    );
+
+    const maxHours = Math.max(...dailyHours.map(Number), 0);
+
+    bars.forEach((bar, index) => {
+
+        const hours = Number(dailyHours[index] || 0);
+
+        const height = maxHours > 0
+            ? (hours / maxHours) * 100
+            : 0;
+
+        bar.style.height = `${height}%`;
+        bar.title = `${formatStudyHours(hours)} hours`;
+
+    });
+}
 
 
 // DISPLAY COURSES
@@ -797,6 +868,7 @@ async function loadDashboardData() {
         // Refresh courses, tasks and study materials
         await loadTasksAndCourses();
         await loadMaterials();
+        await loadStudyProgress();
 
         // Restore the last page only once
         // Restore the last page the user visited
@@ -1174,6 +1246,194 @@ document.addEventListener("click", function (event) {
         deleteMaterial(Number(removeMaterial.dataset.materialDelete));
     }
 });
+
+// STUDY SESSION MODAL
+
+function openStudySessionModal() {
+
+    const form = document.getElementById("studySessionForm");
+
+    form.reset();
+
+    const today = new Date();
+
+    const localDate = new Date(
+        today.getTime() - today.getTimezoneOffset() * 60000
+    ).toISOString().split("T")[0];
+
+    document.getElementById("studyDate").value = localDate;
+    document.getElementById("studyDate").max = localDate;
+
+    document.getElementById("studySessionModal")
+        .classList.remove("hidden");
+}
+
+function closeStudySessionModal() {
+
+    document.getElementById("studySessionModal")
+        .classList.add("hidden");
+
+}
+
+
+// SAVE STUDY SESSION
+
+document.getElementById("studySessionForm")
+    .addEventListener("submit", async function (event) {
+
+        event.preventDefault();
+
+        const studyDate =
+            document.getElementById("studyDate").value;
+
+        const hours =
+            Number(document.getElementById("studyHours").value);
+
+        const courseValue =
+            document.getElementById("studyCourse").value;
+
+        const button =
+            document.getElementById("saveStudySession");
+
+        button.disabled = true;
+        button.textContent = "Saving...";
+
+        try {
+
+            await apiRequest("/api/study/sessions", {
+
+                method: "POST",
+
+                body: JSON.stringify({
+                    study_date: studyDate,
+                    hours: hours,
+                    course_id: courseValue
+                        ? Number(courseValue)
+                        : null
+                })
+
+            });
+
+            closeStudySessionModal();
+
+            await loadStudyProgress();
+
+            showToast("Study time saved successfully!");
+
+        } catch (error) {
+
+            showToast(error.message);
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = "Save study time";
+
+        }
+
+    });
+
+
+// STUDY SESSION BUTTONS
+
+document.getElementById("logStudySession")
+    .addEventListener("click", openStudySessionModal);
+
+document.getElementById("closeStudySession")
+    .addEventListener("click", closeStudySessionModal);
+
+document.getElementById("cancelStudySession")
+    .addEventListener("click", closeStudySessionModal);
+
+document.getElementById("studySessionModal")
+    .addEventListener("click", function (event) {
+
+        if (event.target === this) {
+            closeStudySessionModal();
+        }
+
+    });
+
+
+// WEEKLY GOAL MODAL
+
+function openWeeklyGoalModal() {
+
+    document.getElementById("weeklyGoalForm").reset();
+
+    document.getElementById("weeklyGoalInput").value =
+        currentWeeklyGoal || 10;
+
+    document.getElementById("weeklyGoalModal")
+        .classList.remove("hidden");
+
+}
+
+function closeWeeklyGoalModal() {
+
+    document.getElementById("weeklyGoalModal")
+        .classList.add("hidden");
+
+}
+
+
+// SAVE WEEKLY GOAL
+
+document.getElementById("weeklyGoalForm")
+    .addEventListener("submit", async function (event) {
+
+        event.preventDefault();
+
+        const goal = Number(
+            document.getElementById("weeklyGoalInput").value
+        );
+
+        try {
+
+            await apiRequest("/api/study/goal", {
+
+                method: "PUT",
+
+                body: JSON.stringify({
+                    weekly_goal: goal
+                })
+
+            });
+
+            await loadStudyProgress();
+
+            closeWeeklyGoalModal();
+
+            showToast("Weekly study goal updated!");
+
+        } catch (error) {
+
+            showToast(error.message);
+
+        }
+
+    });
+
+
+// WEEKLY GOAL BUTTONS
+
+document.getElementById("editWeeklyGoal")
+    .addEventListener("click", openWeeklyGoalModal);
+
+document.getElementById("closeWeeklyGoal")
+    .addEventListener("click", closeWeeklyGoalModal);
+
+document.getElementById("cancelWeeklyGoal")
+    .addEventListener("click", closeWeeklyGoalModal);
+
+document.getElementById("weeklyGoalModal")
+    .addEventListener("click", function (event) {
+
+        if (event.target === this) {
+            closeWeeklyGoalModal();
+        }
+
+    });
 
 // Display current date
 document.getElementById("todayDate").textContent =
