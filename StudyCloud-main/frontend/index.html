@@ -232,12 +232,19 @@
                                 <span>YOUR CONSISTENCY</span>
                             </div>
 
-                            <h2>76%</h2>
-                            <p>Weekly study goal</p>
+                            <h2 id="weeklyProgressPercent">0%</h2>
+                            <p>
+                                Weekly study goal:
+                                <span id="weeklyHoursText">0 / 0 hrs</span>
+                            </p>
 
                             <div class="progress">
-                                <span style="width:76%"></span>
+                                <span id="weeklyProgressBar" style="width:0%"></span>
                             </div>
+
+                            <button class="text-button" id="editWeeklyGoal">
+                                Set weekly goal
+                            </button>
                         </div>
 
                     </div>
@@ -276,43 +283,45 @@
                                     <p>Your weekly activity.</p>
                                 </div>
 
-                                <span class="pill">This week</span>
+                                <button class="text-button" id="logStudySession">
+                                    + Log study time
+                                </button>
                             </div>
 
-                            <div class="chart">
+                            <div class="chart" id="studyProgressChart">
 
                                 <div class="chart-column">
-                                    <div class="bar" style="height:42%"></div>
+                                    <div class="bar" data-day="Mon" style="height:0%"></div>
                                     <small>Mon</small>
                                 </div>
 
                                 <div class="chart-column">
-                                    <div class="bar" style="height:70%"></div>
+                                    <div class="bar" data-day="Tue" style="height:0%"></div>
                                     <small>Tue</small>
                                 </div>
 
                                 <div class="chart-column">
-                                    <div class="bar" style="height:54%"></div>
+                                    <div class="bar" data-day="Wed" style="height:0%"></div>
                                     <small>Wed</small>
                                 </div>
 
                                 <div class="chart-column">
-                                    <div class="bar" style="height:88%"></div>
+                                    <div class="bar" data-day="Thu" style="height:0%"></div>
                                     <small>Thu</small>
                                 </div>
 
                                 <div class="chart-column">
-                                    <div class="bar" style="height:60%"></div>
+                                    <div class="bar" data-day="Fri" style="height:0%"></div>
                                     <small>Fri</small>
                                 </div>
 
                                 <div class="chart-column">
-                                    <div class="bar pale" style="height:25%"></div>
+                                    <div class="bar" data-day="Sat" style="height:0%"></div>
                                     <small>Sat</small>
                                 </div>
 
                                 <div class="chart-column">
-                                    <div class="bar pale" style="height:12%"></div>
+                                    <div class="bar" data-day="Sun" style="height:0%"></div>
                                     <small>Sun</small>
                                 </div>
 
@@ -320,7 +329,7 @@
 
                             <div class="chart-footer">
                                 <span>Weekly study hours</span>
-                                <strong>12.4 hrs</strong>
+                                <strong id="weeklyStudyHours">0 hrs</strong>
                             </div>
 
                         </div>
@@ -341,7 +350,7 @@
                             </button>
                         </div>
 
-                        
+
                         <div class="course-grid" id="dashboardCoursesGrid"></div>
                     </div>
 
@@ -561,6 +570,66 @@
 
         </form>
 
+    </div>
+    <!-- STUDY SESSION MODAL -->
+    <div class="modal-backdrop hidden" id="studySessionModal">
+
+        <form class="modal" id="studySessionForm">
+
+            <div class="modal-header">
+                <h2>Log study time</h2>
+                <button type="button" class="close-button" id="closeStudySession">×</button>
+            </div>
+
+            <label for="studyDate">Study date</label>
+            <input type="date" id="studyDate" required>
+
+            <label for="studyHours">Hours studied</label>
+            <input type="number" id="studyHours" min="0.01" max="24" step="0.01" placeholder="e.g. 2.5" required>
+
+            <label for="studyCourse">Course (optional)</label>
+            <select id="studyCourse">
+                <option value="">No course selected</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="button" class="secondary-button" id="cancelStudySession">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button" id="saveStudySession">
+                    Save study time
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+
+    <!-- WEEKLY GOAL MODAL -->
+    <div class="modal-backdrop hidden" id="weeklyGoalModal">
+
+        <form class="modal" id="weeklyGoalForm">
+
+            <div class="modal-header">
+                <h2>Set weekly study goal</h2>
+                <button type="button" class="close-button" id="closeWeeklyGoal">×</button>
+            </div>
+
+            <label for="weeklyGoalInput">How many hours do you want to study each week?</label>
+            <input type="number" id="weeklyGoalInput" min="0.1" max="168" step="0.1" placeholder="e.g. 10" required>
+
+            <div class="modal-actions">
+                <button type="button" class="secondary-button" id="cancelWeeklyGoal">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button">
+                    Save goal
+                </button>
+            </div>
+
+        </form>
     </div>
 
     <div id="toast" class="toast"></div>
