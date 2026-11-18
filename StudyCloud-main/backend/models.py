@@ -30,6 +30,17 @@ class Student(db.Model):
         back_populates="student",
         cascade="all, delete-orphan"
     )
+    study_sessions = db.relationship(
+        "StudySession",
+        back_populates="student",
+        cascade="all, delete-orphan"
+)
+
+    weekly_goal_hours = db.Column(
+        db.Float,
+        nullable=False,
+        default=10.0
+)
 
 
 class Course(db.Model):
@@ -112,3 +123,31 @@ class StudyMaterial(db.Model):
 
     student = db.relationship("Student", back_populates="materials")
     course = db.relationship("Course", back_populates="materials")
+
+class StudySession(db.Model):
+    __tablename__ = "study_sessions"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    course_id = db.Column(
+        db.Integer,
+        db.ForeignKey("courses.id"),
+        nullable=True
+    )
+
+    student_id = db.Column(
+        db.Integer,
+        db.ForeignKey("students.id"),
+        nullable=False
+    )
+
+    study_date = db.Column(db.Date, nullable=False)
+    hours = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    student = db.relationship(
+        "Student",
+        back_populates="study_sessions"
+    )
+
+    course = db.relationship("Course")

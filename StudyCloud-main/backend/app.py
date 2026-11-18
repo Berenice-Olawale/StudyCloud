@@ -69,6 +69,8 @@ app.register_blueprint(
 
 from routes.dashboard import dashboard_bp
 app.register_blueprint(dashboard_bp, url_prefix="/api/dashboard")
+from routes.study import study_bp
+app.register_blueprint(study_bp, url_prefix="/api/study")
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
