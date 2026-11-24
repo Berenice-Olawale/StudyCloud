@@ -25,3 +25,11 @@ backend/downloaded_notes.txt
 
 # Editor
 .vscode/
+
+# Local/cloud secrets and generated files
+backend/.env
+cloud/terraform/terraform.tfvars
+cloud/terraform/.terraform/
+cloud/terraform/*.tfstate*
+cloud/terraform/health_check.zip
+backend/uploads/

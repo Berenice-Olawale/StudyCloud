@@ -1,0 +1,15 @@
+services:
+  backend:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      FLASK_DEBUG: "false"
+    volumes:
+      - uploads_data:/app/uploads
+
+volumes:
+  uploads_data:
